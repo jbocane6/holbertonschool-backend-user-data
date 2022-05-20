@@ -7,9 +7,13 @@ import re
 import logging
 
 
+PII_FIELDS = ('name', 'password', 'phone', 'ssn', 'email')
+
+
 class RedactingFormatter(logging.Formatter):
-    """ Redacting Formatter class
-        """
+    """
+    Redacting Formatter class
+    """
 
     REDACTION = "***"
     FORMAT = "[HOLBERTON] %(name)s %(levelname)s %(asctime)-15s: %(message)s"
@@ -34,8 +38,25 @@ class RedactingFormatter(logging.Formatter):
 
 def filter_datum(fields: List[str], redaction: str, message: str,
                  separator: str) -> str:
-    """Returns the log message obfuscated"""
+    """
+    Returns the log message obfuscated
+    """
     for i in fields:
         message = re.sub(i + "=.*?" + separator,
                          i + "=" + redaction + separator, message)
     return message
+
+
+def get_logger() -> logging.Logger:
+    """
+    Function that returns a logging object
+    """
+    log = logging.getLogger('user_data')
+    log.setLevel(logging.INFO)
+    log.propagate = False
+    stream_h = logging.StreamHandler()
+    formatter = RedactingFormatter(PII_FIELDS)
+    log.setFormatter(formatter)
+    log.addHandler(stream_h)
+
+    return log
