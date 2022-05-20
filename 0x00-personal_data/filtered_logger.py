@@ -86,11 +86,13 @@ def main():
     my_db = get_db()
     db_cursor = my_db.cursor()
     db_cursor.execute("SELECT * FROM users;")
+    response = db_cursor.fetchall()
+
     fields = [i[0] for i in db_cursor.description]
 
     log = get_logger()
 
-    for row in db_cursor:
+    for row in response:
         _row = ''.join(f'{f}={str(r)}; ' for r, f in zip(row, fields))
         log.info(_row.strip())
 
