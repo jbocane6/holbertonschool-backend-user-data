@@ -3,6 +3,8 @@
 Write a function called filter_datum that returns the log message obfuscated:
 """
 from typing import List
+from os import getenv
+import mysql.connector
 import re
 import logging
 
