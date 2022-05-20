@@ -65,7 +65,9 @@ def get_logger() -> logging.Logger:
 
 
 def get_db() -> mysql.connector.connection.MySQLConnection:
-    """Returns a connector to a mysql database"""
+    """
+    Returns a connector to a mysql database
+    """
     db_connection = mysql.connector.connection.MySQLConnection(
         user=getenv('PERSONAL_DATA_DB_USERNAME', 'root'),
         password=getenv('PERSONAL_DATA_DB_PASSWORD', ''),
@@ -73,3 +75,24 @@ def get_db() -> mysql.connector.connection.MySQLConnection:
         database=getenv('PERSONAL_DATA_DB_NAME'))
 
     return db_connection
+
+
+def main():
+    """
+    Will obtain a database connection using get_db
+    and retrieve all rows in the users table
+    and display each row under a filtered format
+    """
+    my_db = get_db()
+    db_cursor = my_db.cursor()
+    db_cursor.execute("SELECT * FROM users;")
+    fields = [i[0] for i in db_cursor.description]
+
+    log = get_logger()
+
+    for row in db_cursor:
+        _row = ''.join(f'{f}={str(r)}; ' for r, f in zip(row, fields))
+        log.info(_row.strip())
+
+    db_cursor.close()
+    my_db.close()
