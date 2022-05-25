@@ -20,6 +20,6 @@ class BasicAuth(Auth):
         """
         if authorization_header and type(authorization_header) == str:
             return authorization_header.split(" ")[-1]
-        authorization_header.startswith('Basic'):
+        if authorization_header.startswith('Basic'):
             return authorization_header.split(" ")[-1]
         return None
