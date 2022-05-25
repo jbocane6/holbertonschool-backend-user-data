@@ -18,8 +18,8 @@ class BasicAuth(Auth):
         Returns the Base64 part of the Authorization header
         for a Basic Authentication
         """
-        if not authorization_header and type(authorization_header) == str:
-            return None
-        if authorization_header.startswith('Basic '):
-            return None
-        return authorization_header.split(" ")[-1]
+        if authorization_header and type(authorization_header) == str:
+            return authorization_header.split(" ")[-1]
+        authorization_header.startswith('Basic'):
+            return authorization_header.split(" ")[-1]
+        return None
