@@ -11,6 +11,7 @@ class SessionAuth(Auth):
     Creates a Session ID for a user_id.
     """
     user_id_by_session_id = {}
+
     def create_session(self, user_id: str = None) -> str:
         if user_id is None or type(user_id) is not str:
             return None
