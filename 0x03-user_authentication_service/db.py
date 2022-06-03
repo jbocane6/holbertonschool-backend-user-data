@@ -61,8 +61,7 @@ class DB():
         the first row found in the users table as filtered
         by the method's input arguments
         Arguments:
-            email: A non-nullable string.
-            hashed_password: A non-nullable string.
+            kwargs: key word based argument
         Returns:
             The first row found in the users table.
         """
@@ -76,3 +75,23 @@ class DB():
         if rqrd_usr is None:
             raise NoResultFound
         return rqrd_usr
+
+    def update_user(self, user_id: int, **kwargs) -> None:
+        """
+        Implement the DB.update_user method
+        that takes as argument a required user_id integer
+        and arbitrary keyword arguments, and returns None.
+        Arguments:
+            user_id - the given user id
+        """
+        if kwargs is None:
+            return None
+        rqrd_usr = self.find_user_by(id=user_id)
+        key_cols = User.__table__.columns.keys()
+        for k in kwargs:
+            if k not in key_cols:
+                raise ValueError
+
+        for k, v in kwargs.items():
+            setattr(rqrd_usr, k, v)
+        self._session.commit()
