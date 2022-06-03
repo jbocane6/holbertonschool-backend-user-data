@@ -53,3 +53,26 @@ class DB():
         self._session.add(new_user)
         self._session.commit()
         return new_user
+
+    def find_user_by(self, **kwargs) -> User:
+        """
+        Implement the DB.find_user_by method.
+        This method takes in arbitrary keyword arguments and returns
+        the first row found in the users table as filtered
+        by the method's input arguments
+        Arguments:
+            email: A non-nullable string.
+            hashed_password: A non-nullable string.
+        Returns:
+            The first row found in the users table.
+        """
+        if kwargs is None:
+            raise InvalidRequestError
+        key_cols = User.__table__.columns.keys()
+        for k in kwargs.keys():
+            if k not in key_cols:
+                raise InvalidRequestError
+        rqrd_usr = self._session.query(User).filter_by(**kwargs).first()
+        if rqrd_usr is None:
+            raise NoResultFound
+        return rqrd_usr
