@@ -5,7 +5,6 @@ DB module
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.orm.session import Session
 from sqlalchemy.exc import InvalidRequestError
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -71,10 +70,10 @@ class DB():
         for k in kwargs.keys():
             if k not in key_cols:
                 raise InvalidRequestError
-        rqrd_usr = self._session.query(User).filter_by(**kwargs).first()
-        if rqrd_usr is None:
+        rqrd_user = self._session.query(User).filter_by(**kwargs).first()
+        if rqrd_user is None:
             raise NoResultFound
-        return rqrd_usr
+        return rqrd_user
 
     def update_user(self, user_id: int, **kwargs) -> None:
         """
@@ -86,12 +85,12 @@ class DB():
         """
         if kwargs is None:
             return None
-        rqrd_usr = self.find_user_by(id=user_id)
+        rqrd_user = self.find_user_by(id=user_id)
         key_cols = User.__table__.columns.keys()
         for k in kwargs:
             if k not in key_cols:
                 raise ValueError
 
         for k, v in kwargs.items():
-            setattr(rqrd_usr, k, v)
+            setattr(rqrd_user, k, v)
         self._session.commit()
