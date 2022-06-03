@@ -56,6 +56,23 @@ class Auth:
         except (NoResultFound, InvalidRequestError):
             return False
 
+    def create_session(self, email: str) -> Union[str, None]:
+        """
+        Create Session.
+        Takes an email string argument and returns the session ID as a string.
+        Args:
+            email: A non-nullable string.
+        Returns:
+            str: The session id.
+        """
+        try:
+            user = self._db.find_user_by(email=email)
+            session_id = _generate_uuid()
+            self._db.update_user(user.id, session_id=session_id)
+            return session_id
+        except (NoResultFound, ValueError):
+            return None
+
 
 def _hash_password(password: str) -> bytes:
     """
