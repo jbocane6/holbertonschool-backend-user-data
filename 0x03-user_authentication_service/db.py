@@ -3,15 +3,14 @@
 DB module
 """
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
-
-
+from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.exc import InvalidRequestError
 from user import Base, User
 
 
-class DB():
+class DB:
     """
     DB class
     """
@@ -61,16 +60,10 @@ class DB():
         Returns:
             The first row found in the users table.
         """
-        if kwargs is None:
-            raise InvalidRequestError
-        key_cols = User.__table__.columns.keys()
-        for k in kwargs.keys():
-            if k not in key_cols:
-                raise InvalidRequestError
-        rqrd_user = self._session.query(User).filter_by(**kwargs).first()
-        if rqrd_user is None:
-            raise NoResultFound
-        return rqrd_user
+        user = self._session.query(User).filter_by(**kwargs).first()
+        if not user:
+            raise NoResultFound("No user found")
+        return user
 
     def update_user(self, user_id: int, **kwargs) -> None:
         """
@@ -80,14 +73,13 @@ class DB():
         Arguments:
             user_id - the given user id
         """
-        if kwargs is None:
-            return None
-        rqrd_user = self.find_user_by(id=user_id)
-        key_cols = User.__table__.columns.keys()
-        for k in kwargs:
-            if k not in key_cols:
-                raise ValueError
-
-        for k, v in kwargs.items():
-            setattr(rqrd_user, k, v)
-        self._session.commit()
+        try:
+            user = self.find_user_by(id=user_id)
+            for key, value in kwargs.items():
+                if hasattr(user, key):
+                    setattr(user, key, value)
+                else:
+                    raise InvalidRequestError
+            self._session.commit()
+        except (NoResultFound, InvalidRequestError, ValueError):
+            raise ValueError
