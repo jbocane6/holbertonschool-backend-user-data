@@ -73,6 +73,24 @@ class Auth:
         except (NoResultFound, ValueError):
             return None
 
+    def get_user_from_session_id(self, session_id: str) -> Union[User, None]:
+        """
+        Get user from a session id.
+        Takes a single session_id string argument
+        and returns the corresponding User or None.
+        Args:
+            session_id: The session id.
+        Returns:
+            User: The user object, None otherwise.
+        """
+        if not session_id:
+            return None
+        try:
+            user = self._db.find_user_by(session_id=session_id)
+            return user
+        except NoResultFound:
+            return None
+
 
 def _hash_password(password: str) -> bytes:
     """
