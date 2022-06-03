@@ -12,7 +12,7 @@ from sqlalchemy.orm.exc import NoResultFound
 from user import Base, User
 
 
-class DB:
+class DB():
     """
     DB class
     """
