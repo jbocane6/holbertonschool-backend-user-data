@@ -3,10 +3,11 @@
 This module contains the methods and attributes needed
 for the authentication
 """
-from bcrypt import hashpw, gensalt
+from bcrypt import hashpw, gensalt, checkpw
 from db import DB
 from user import User
 from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.exc import InvalidRequestError
 
 
 class Auth:
